@@ -3,12 +3,30 @@ import reactLogo from './assets/react.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [search, setSearch] = useState(0)
+  const [animals, setAnimals] = useState([])
+
+  const HandleSearch = (event) => {
+    setSearch(event.target.value)
+    console.log(search)
+  }
 
   return (
-    <div className="App">
+    <main className="App">
+      <input
+      type='text'
+      placeholder="Search"
+      onChange={HandleSearch}
+      />
 
-    </div>
+      <ul>
+        {animals.map(animal => (
+          <li>
+            <strong>{animal.type}</strong>{animal.name}
+          </li>
+        ))}
+      </ul>
+    </main>
   )
 }
 
