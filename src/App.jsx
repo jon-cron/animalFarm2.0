@@ -1,14 +1,19 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
 
 function App() {
-  const [search, setSearch] = useState(0)
   const [animals, setAnimals] = useState([])
+  useEffect(() => {
+    const lastQuery = localStorage.getItem('lastQuery')
+    HandleSearch(lastQuery)
+  }, [])
+  const HandleSearch = async (q) => {
+    const res = await fetch('http://localhost:8080?' + new URLSearchParams({q}))
+    const data = await res.json()
+    setAnimals(data)
 
-  const HandleSearch = (event) => {
-    setSearch(event.target.value)
-    console.log(search)
+    localStorage.setItem('lastQuery', q)
   }
 
   return (
@@ -16,18 +21,23 @@ function App() {
       <input
       type='text'
       placeholder="Search"
-      onChange={HandleSearch}
+      onChange={(e) => HandleSearch(e.target.value)}
       />
 
       <ul>
         {animals.map(animal => (
-          <li>
-            <strong>{animal.type}</strong>{animal.name}
-          </li>
+          <Animal key={animal.id} {...animal}/>
         ))}
+        {animals.length === 0 && 'No animals found'}
       </ul>
     </main>
   )
 }
-
+function Animal({type, name, age}) {
+  return (
+    <li>
+      <strong>{type}</strong> {name} ({age} years old)
+    </li>
+  )
+}
 export default App
